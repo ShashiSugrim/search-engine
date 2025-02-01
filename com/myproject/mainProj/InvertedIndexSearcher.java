@@ -27,10 +27,14 @@ public class InvertedIndexSearcher {
         }
 
         // Load necessary data
-        stoplist = DataLoader.loadStoplist("generated_stoplist.txt");
-        stemmingDictionary = DataLoader.loadStemmingDictionary("stemming_dictionary.txt");
-        documentIdToFilename = DataLoader.loadDocumentIdMap("document_id_map.txt");
-        DataLoader.loadInvertedIndex("inverted_index.txt", parser.doStemming, invertedIndex, invertedIndexEntries,
+        String baseDir = parser.fileDirectory;
+        System.out.println("base directory in inverted index searcher is " + baseDir);
+        stoplist = DataLoader.loadStoplist(baseDir + "\\generated_stoplist.txt");        
+        System.out.println("stoplist is " + stoplist);
+        stemmingDictionary = DataLoader.loadStemmingDictionary(baseDir + "\\stemming_dictionary.txt");
+        documentIdToFilename = DataLoader.loadDocumentIdMap(baseDir +"\\document_id_map.txt");
+
+        DataLoader.loadInvertedIndex(baseDir +"\\inverted_index.txt", parser.doStemming, invertedIndex, invertedIndexEntries,
                 variantToDocIds, stemmingDictionary);
 
         // Perform the search or print operation

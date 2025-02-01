@@ -15,6 +15,7 @@ class CommandLineParser {
     public String outputMode = "FILE"; // Default output mode
     public String queryFile;
     public int snippetSize = 5; // Default snippet size
+    public String fileDirectory = ".";
 
     public CommandLineParser(String[] args) {
         System.out.println("In commandline parser we have these as args: " + Arrays.toString(args));
@@ -24,8 +25,11 @@ class CommandLineParser {
     private void parse(String[] args) {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-
-            if (arg.startsWith("-SEARCH=WORD")) {
+            if (arg.startsWith("-FILE_DIR=")) {
+                fileDirectory = arg.substring("-FILE_DIR=".length());
+                System.out.println("File directory: " + fileDirectory);
+            }
+            else if (arg.startsWith("-SEARCH=WORD")) {
                 searchType = "WORD";
                 searchValue = parseArgumentValue(args, i, "-SEARCH=WORD");
                 i = (searchValue != null) ? i + 1 : i; 
