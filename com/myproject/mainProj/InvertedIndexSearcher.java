@@ -1,5 +1,7 @@
 package com.myproject.mainProj;
+
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 import com.myproject.utils.StatClasses;
@@ -21,7 +23,7 @@ public class InvertedIndexSearcher {
         System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
 
         CommandLineParser parser = new CommandLineParser(args);
-        
+
         if (!parser.isValid()) {
             return; // Exit if command line arguments are invalid
         }
@@ -29,13 +31,15 @@ public class InvertedIndexSearcher {
         // Load necessary data
         String baseDir = parser.fileDirectory;
         System.out.println("base directory in inverted index searcher is " + baseDir);
-        stoplist = DataLoader.loadStoplist(baseDir + "\\generated_stoplist.txt");        
-        System.out.println("stoplist is " + stoplist);
-        stemmingDictionary = DataLoader.loadStemmingDictionary(baseDir + "\\stemming_dictionary.txt");
-        documentIdToFilename = DataLoader.loadDocumentIdMap(baseDir +"\\document_id_map.txt");
 
-        DataLoader.loadInvertedIndex(baseDir +"\\inverted_index.txt", parser.doStemming, invertedIndex, invertedIndexEntries,
-                variantToDocIds, stemmingDictionary);
+        stoplist = DataLoader.loadStoplist(Paths.get(baseDir, "generated_stoplist.txt").toString());
+        System.out.println("stoplist is " + stoplist);
+        stemmingDictionary = DataLoader
+                .loadStemmingDictionary(Paths.get(baseDir, "stemming_dictionary.txt").toString());
+        documentIdToFilename = DataLoader.loadDocumentIdMap(Paths.get(baseDir, "document_id_map.txt").toString());
+
+        DataLoader.loadInvertedIndex(Paths.get(baseDir, "inverted_index.txt").toString(), parser.doStemming,
+                invertedIndex, invertedIndexEntries, variantToDocIds, stemmingDictionary);
 
         // Perform the search or print operation
         try {
@@ -49,7 +53,8 @@ public class InvertedIndexSearcher {
                 outputBatchResults(allResults, parser.outputMode, parser.outputFilename);
             } else if (parser.searchType != null && parser.searchValue != null) {
                 // Single query processing
-                QueryResult result = processSingleQuery(parser.searchType, parser.searchValue, parser.doStemming, parser.snippetSize);
+                QueryResult result = processSingleQuery(parser.searchType, parser.searchValue, parser.doStemming,
+                        parser.snippetSize);
                 if (result != null) {
                     allResults.add(result);
                     // Output results for single query
@@ -67,8 +72,8 @@ public class InvertedIndexSearcher {
                 System.out.println("Inverted index entries have been processed.");
             }
             DataLoader.saveStemmingDictionary(stemmingDictionary, "stemming_dictionary.txt");
-        } catch (IOException e) {
-            System.out.println("Error during processing: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -110,7 +115,8 @@ public class InvertedIndexSearcher {
         return allResults;
     }
 
-    private static QueryResult processSingleQuery(String searchType, String searchValue, boolean doStemming, int snippetSize) {
+    private static QueryResult processSingleQuery(String searchType, String searchValue, boolean doStemming,
+            int snippetSize) {
         try {
             if (searchType.equals("WORD")) {
                 return SearchProcessor.searchByWord(searchValue.toLowerCase(), doStemming, invertedIndex,
