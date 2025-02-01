@@ -1,5 +1,7 @@
 const express = require('express');
 const { exec } = require('child_process');
+const cors = require('cors');
+
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -8,6 +10,7 @@ const port = 3000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(cors());
 
 // Replace hardcoded file_path with parameter from command-line arguments
 const file_path = process.argv[2] || './';
