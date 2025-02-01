@@ -10,7 +10,7 @@ const port = 3000;
 app.use(express.json());
 
 // Replace hardcoded file_path with parameter from command-line arguments
-const file_path = process.argv[2] ;
+const file_path = process.argv[2] || './';
 // (async () => {
 //     try {
 //       const files = await fs.readdir(file_path);
