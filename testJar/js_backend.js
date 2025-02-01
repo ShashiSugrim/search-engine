@@ -8,7 +8,10 @@ const port = 3000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-file_path = "F:/fall2024/IsolatedTask9CS335/testJar"
+
+// Replace hardcoded file_path with parameter from command-line arguments
+const file_path = process.argv[2] ;
+
 // Search endpoint
 app.post('/search', async (req, res) => {
     try {
