@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2' // Or latest version
+
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+}
+
+application {
+    mainClass = 'com.myproject.mainProj.InvertedIndexSearcher'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['com']
+        }
+    }
+}
+
+run {
+    // Print the classpath before running
+    doFirst {
+        println "Classpath for run task: ${classpath.asPath}"
+    }
+}
+
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'com.myproject.mainProj.InvertedIndexSearcher'
+    }
+    // Add any other shadowJar configurations here if needed
+}

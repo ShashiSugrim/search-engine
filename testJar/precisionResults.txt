@@ -1,0 +1,133 @@
+query 1: -SEARCH=QUERY "How does natural selection contribute to evolution?"
+Result 1: Document ID: 20, Document Name: Balance of nature - Wikipedia.html
+Result 3: Document ID: 58, Document Name: Evolution by Natural Selection _ manoa.hawaii.edu_ExploringOurFluidEarth.html
+Result 4: Document ID: 68, Document Name: How are gene variants involved in evolution__ MedlinePlus Genetics.html
+Result 5: Document ID: 83, Document Name: How does Ecosystem stay Balanced_ - GeeksforGeeks.html
+Result 6: Document ID: 104, Document Name: national_geographic_Natural Selection.html
+Result 7: Document ID: 105, Document Name: Natural Selection (Stanford Encyclopedia of Philosophy).html
+Result 8: Document ID: 106, Document Name: Natural Selection - an overview _ ScienceDirect Topics.html
+Result 9: Document ID: 107, Document Name: Natural selection - Wikipedia.html
+Result 10: Document ID: 125, Document Name: Ocean circulation - Understanding Global Change.html
+Result 11: Document ID: 171, Document Name: Understanding Natural Selection_ Essential Concepts and Common Misconceptions _ Evolution_ Education and Outreach _ Full Text.html
+query 2: -SEARCH=QUERY "What are the basic principles of Newton's laws of motion?"
+Result 1: Document ID: 113, Document Name: Newton's Laws - Ferrovial.html
+Result 2: Document ID: 115, Document Name: Newton's Laws of Motion - Three Laws of Motion Explanation, Examples.html
+Result 3: Document ID: 116, Document Name: Newton's Laws of Motion _ Brilliant Math & Science Wiki.html
+Result 4: Document ID: 118, Document Name: Newton's Laws of Motion _ Principles of Physics I Class Notes _ Fiveable.html
+query 3: -SEARCH=QUERY "What was daily life like in ancient Rome?"
+Result 1: Document ID: 192, Document Name: What was daily life like in ancient Rome_ - History Skills.html
+Result 2: Document ID: 65, Document Name: History of Ancient Rome for Kids_ Roman Food, Jobs, Daily Life.html
+Result 3: Document ID: 193, Document Name: What Was Life Like In Ancient Rome_ - WorldAtlas.html
+Result 4: Document ID: 66, Document Name: History_ Renaissance Science for Kids.html
+Result 5: Document ID: 67, Document Name: Home - Year 7 History - Daily life in Ancient Rome - LibGuides at St Joseph's Regional College.html
+Result 6: Document ID: 9, Document Name: 8th Sci.-Periodic Table Flashcards _ Quizlet.html
+Result 7: Document ID: 13, Document Name: Ancient Lives of Rome Unveiled_ Daily Routines and Social Structures _ by Cody Trusler _ Exploring History _ Medium.html
+Result 8: Document ID: 15, Document Name: Ancient Rome_ Food, Jobs, and Daily Life.html
+Result 9: Document ID: 146, Document Name: Renaissance art _ Definition, Characteristics, Style, Examples, & Facts _ Britannica.html
+Result 10: Document ID: 149, Document Name: Roman Daily Life - History for kids.html
+Result 11: Document ID: 150, Document Name: Roman Daily Life - World History Encyclopedia.html
+Result 12: Document ID: 151, Document Name: Roman Daily Life, Society and Culture _ UNRV Roman History.html
+Result 13: Document ID: 152, Document Name: Romans_ Daily Life _ English Heritage.html
+Result 14: Document ID: 153, Document Name: Rome Life in Ancient Rome - HISTORY'S HISTORIES You are history. We are the future..html
+Result 15: Document ID: 37, Document Name: Culture of ancient Rome - Wikipedia.html
+Result 16: Document ID: 101, Document Name: Life of the People [ushistory.org].html
+Result 17: Document ID: 38, Document Name: Daily Life in Ancient Rome for Kids and Teachers - Ancient Rome for Kids.html
+Result 18: Document ID: 166, Document Name: The Renaissance_ The 'Rebirth' of Science & Culture _ Live Science.html
+Result 19: Document ID: 168, Document Name: The Roman Empire_ in the First Century. The Roman Empire. Life In Roman Times. Home Life _ PBS.html
+Result 20: Document ID: 169, Document Name: Transformation of Art, Science During Renaissance - EuroSchool.html
+Result 21: Document ID: 170, Document Name: Traveling back in time_ What was it like to live in ancient Rome_ - Big Think.html
+Result 22: Document ID: 55, Document Name: Everyday Life - Ancient Rome - Library Guides at Norwood Secondary College.html
+query 4: -SEARCH=QUERY "How does an ecosystem maintain its balance?"
+Result 1: Document ID: 195, Document Name: Why a balanced ecosystem is necessary for a healthy environment and how is the wildlife of forest important in maintaining the ecological balance_ _ ResearchGate.html
+Result 3: Document ID: 196, Document Name: Why a balanced ecosystem is necessary for healthy environment justify and forests help in conserving wildlife and eco balance in nature_ _ ResearchGate.html
+Result 4: Document ID: 70, Document Name: How can you maintain the ecosystems in your surrounding area_.html
+Result 5: Document ID: 73, Document Name: How do biogeochemical cycles maintain ecosystem balance_ _ TutorChase.html
+Result 6: Document ID: 74, Document Name: How do changes affect the balance of an ecosystem_ - Internet Geography.html
+Result 7: Document ID: 83, Document Name: How does Ecosystem stay Balanced_ - GeeksforGeeks.html
+Result 8: Document ID: 20, Document Name: Balance of nature - Wikipedia.html
+Result 9: Document ID: 21, Document Name: Balanced Ecosystem_ Components, Factors, Importance _ Turito.html
+Result 10: Document ID: 160, Document Name: The Importance of Maintaining Balance in Ecosystems.html
+Result 11: Document ID: 100, Document Name: Keeping balance in the environment.html
+Result 12: Document ID: 109, Document Name: Natural Selection, Genetic Drift, and Gene Flow Do Not Act in Isolation in Natural Populations _ Learn Science at Scitable.html
+Result 13: Document ID: 47, Document Name: Diversity and Biological Balance _ US EPA.html
+Result 14: Document ID: 48, Document Name: Does global warming affect ocean currents and what role do oceans play in climate change_ _ ResearchGate.html
+Result 15: Document ID: 49, Document Name: Ecological Balance And Living In Harmony With The Planet _ The Interfaith Center for Sustainable Development.html
+Result 16: Document ID: 50, Document Name: Ecological Balance _ Definition, Importance & Examples - Lesson _ Study.com.html
+Result 17: Document ID: 52, Document Name: Ecosystem Equilibrium _ Overview & Species - Lesson _ Study.com.html
+Result 18: Document ID: 53, Document Name: Ecosystem_ Balance & Imbalance _ Plantlet.html
+Result 19: Document ID: 187, Document Name: What is Balanced Ecosystem_, Balance in an Ecosystem.html
+query 5: -SEARCH=QUERY "What is the periodic table, and how is it organized?"
+Result 1: Document ID: 3, Document Name: 3.2_ A Brief History of the Organization of the Periodic Table - Chemistry LibreTexts.html
+Result 2: Document ID: 131, Document Name: Organizing Atoms and Electrons_ The Periodic Table - Annenberg Learner.html
+Result 3: Document ID: 69, Document Name: How are the elements are organized in the periodic table_ _ Socratic.html
+Result 4: Document ID: 9, Document Name: 8th Sci.-Periodic Table Flashcards _ Quizlet.html
+Result 5: Document ID: 140, Document Name: Periodic table _ Definition, Elements, Groups, Charges, Trends, & Facts _ Britannica.html
+Result 6: Document ID: 83, Document Name: How does Ecosystem stay Balanced_ - GeeksforGeeks.html
+Result 7: Document ID: 89, Document Name: How Is the Periodic Table Organized Today_.html
+Result 8: Document ID: 90, Document Name: How is the periodic table organized_ - brainly.com.html
+Result 9: Document ID: 91, Document Name: How Is The Periodic Table Organized_.html
+Result 10: Document ID: 93, Document Name: How the Periodic Table groups the elements _ Live Science.html
+Result 11: Document ID: 94, Document Name: How to Read the Periodic Table _ Groups & Periods _ ChemTalk.html
+Result 12: Document ID: 103, Document Name: Name at least 3 ways the Periodic Table is organized. - brainly.com.html
+Result 13: Document ID: 172, Document Name: Understanding the Organization of the Periodic Table _ Britannica.html
+Result 14: Document ID: 50, Document Name: Ecological Balance _ Definition, Importance & Examples - Lesson _ Study.com.html
+Result 15: Document ID: 59, Document Name: Explain how the periodic table is organized_ _ Socratic.html
+Result 16: Document ID: 190, Document Name: What Is the Periodic Table of Elements_.html
+query 6: -SEARCH=QUERY "What causes ocean currents, and how do they affect climate?"
+Result 1: Document ID: 128, Document Name: Ocean Currents and Climate Change.html
+Result 2: Document ID: 198, Document Name: Why are Ocean Currents Important_ _.html
+Result 3: Document ID: 74, Document Name: How do changes affect the balance of an ecosystem_ - Internet Geography.html
+Result 4: Document ID: 77, Document Name: How Do Ocean Currents Affect Weather_ - Environment Co.html
+Result 5: Document ID: 48, Document Name: Does global warming affect ocean currents and what role do oceans play in climate change_ _ ResearchGate.html
+Result 6: Document ID: 81, Document Name: How Does Climate Change Affect the Ocean_ _ NASA Climate Kids.html
+Result 7: Document ID: 25, Document Name: Climate Science Investigations South Florida - Temperature Over Time.html
+Result 8: Document ID: 125, Document Name: Ocean circulation - Understanding Global Change.html
+Result 10: Document ID: 126, Document Name: Ocean Circulation _ Patterns, Effects on Climate & Temperature - Lesson _ Study.com.html
+query 7: -SEARCH=QUERY "What are the main differences between plant and animal cells?"
+Result 1: Document ID: 5, Document Name: 3.7.3_ Comparing Plant and Animal Cells - Biology LibreTexts.html
+Result 2: Document ID: 6, Document Name: 4.10_ Eukaryotic Cells - Comparing Plant and Animal Cells - Biology LibreTexts.html
+Result 3: Document ID: 8, Document Name: 5 Parts of a Computer _ Different Main & Basic Components _ Names & Info.html
+Result 5: Document ID: 16, Document Name: Animal Cells versus Plant Cells _ Biology for Non-Majors I.html
+Result 6: Document ID: 144, Document Name: Plant Cells vs. Animal Cells_ What's the Difference By Unacademy.html
+Result 7: Document ID: 26, Document Name: Comparing & Contrasting Plant & Animal Cells Practice _ Biology Practice Problems _ Study.com.html
+Result 8: Document ID: 40, Document Name: Describe two differences and two similarities between animal cells and plant cells. _ MyTutor.html
+Result 9: Document ID: 42, Document Name: Difference Between Plant And Animal Cell Are Explained In Detail.html
+Result 10: Document ID: 43, Document Name: Difference Between Plant Cell And Animal Cell in Tabular Form.html
+Result 11: Document ID: 44, Document Name: Differences Between Plant and Animal Cells (Video).html
+Result 12: Document ID: 45, Document Name: Differences between Plant and Animal Cells (with Diagrams).html
+Result 13: Document ID: 46, Document Name: Differences Between Plant and Animal Cells.html
+Result 14: Document ID: 50, Document Name: Ecological Balance _ Definition, Importance & Examples - Lesson _ Study.com.html
+Result 15: Document ID: 183, Document Name: What are the Differences Between Plant Cells and Animal Cells_ - WorldAtlas.html
+Result 16: Document ID: 189, Document Name: What is the difference between Animal and Plant Cell_.html
+Result 17: Document ID: 64, Document Name: Here are top difference between plant cells and animal cells.html
+query 8: -SEARCH=QUERY "How did the Renaissance impact developments in art and science?"
+Result 1: Document ID: 166, Document Name: The Renaissance_ The 'Rebirth' of Science & Culture _ Live Science.html
+Result 2: Document ID: 199, Document Name: Why is the Renaissance era so important_.html
+Result 3: Document ID: 72, Document Name: How did Renaissance art reflect humanist concerns_.html
+Result 4: Document ID: 159, Document Name: The impact of the Renaissance on art and literature - It marked the transition from the medieval - Studocu.html
+query 9: -SEARCH=QUERY "What are the fundamental parts of a computer and their functions?"
+Result 1: Document ID: 133, Document Name: Parts of a Computer and Their Function - FlashMob Computing.html
+Result 2: Document ID: 8, Document Name: 5 Parts of a Computer _ Different Main & Basic Components _ Names & Info.html
+Result 3: Document ID: 136, Document Name: Parts of the Computer & Their Uses.html
+Result 4: Document ID: 22, Document Name: Basic Computer Hardware - Learn the Essentials.html
+Result 5: Document ID: 27, Document Name: Components of Computer - Five Basic Computer Components.html
+Result 6: Document ID: 29, Document Name: Computer - Parts, Functions, Types, Uses and FAQs.html
+Result 7: Document ID: 42, Document Name: Difference Between Plant And Animal Cell Are Explained In Detail.html
+Result 8: Document ID: 43, Document Name: Difference Between Plant Cell And Animal Cell in Tabular Form.html
+Result 9: Document ID: 50, Document Name: Ecological Balance _ Definition, Importance & Examples - Lesson _ Study.com.html
+Result 10: Document ID: 181, Document Name: What are the 7 Components of a Computer_ _ by Chaudhary Mehran _ Medium.html
+Result 11: Document ID: 107, Document Name: Natural selection - Wikipedia.html
+Result 12: Document ID: 115, Document Name: Newton's Laws of Motion - Three Laws of Motion Explanation, Examples.html
+query 10: -SEARCH=QUERY  "How do vaccines work to prevent diseases?"
+Result 1: Document ID: 197, Document Name: Why and How Vaccines Work - PMC.html
+Result 2: Document ID: 200, Document Name: Why vaccination is important and the safest way to protect yourself - NHS.html
+Result 3: Document ID: 79, Document Name: How do vaccines work_.html
+Result 4: Document ID: 96, Document Name: How vaccines work to protect us _ OSF HealthCare.html
+Result 5: Document ID: 97, Document Name: How vaccines work _ Immunize BC.html
+Result 6: Document ID: 99, Document Name: How Vaccines Work_ Immune Response and the Body's Reaction _ Pfizer.html
+Result 7: Document ID: 174, Document Name: Vaccines and immunization.html
+Result 8: Document ID: 175, Document Name: Vaccines FAQ - Johns Hopkins Coronavirus Resource Center.html
+Result 9: Document ID: 176, Document Name: Vaccines for children_ Your questions answered _ UNICEF Parenting.html
+Result 10: Document ID: 178, Document Name: Vaccines Work _ HHS.gov.html
+Result 11: Document ID: 63, Document Name: health_newzealand_How vaccines work.html
+Binary file (standard input) matches
