@@ -8,7 +8,7 @@ const port = 3000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-
+file_path = "F:/fall2024/IsolatedTask9CS335/testJar"
 // Search endpoint
 app.post('/search', async (req, res) => {
     try {
@@ -19,7 +19,7 @@ app.post('/search', async (req, res) => {
         }
 
         // Execute Java command
-        const command = `java -jar Task9-all.jar -SEARCH=QUERY "${query}" -GUI=false -output="output.txt"`;
+        const command = `java -jar IsolatedTask9CS335-all.jar -FILE_DIR=${file_path} -SEARCH=QUERY "${query}" -GUI=false -output="output.txt"`;
         
         exec(command, async (error, stdout, stderr) => {
             if (error) {
