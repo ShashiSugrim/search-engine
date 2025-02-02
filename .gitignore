@@ -10,3 +10,4 @@ node_modules/
 testJar/node_modules/
 
 *.class
+output.txt
