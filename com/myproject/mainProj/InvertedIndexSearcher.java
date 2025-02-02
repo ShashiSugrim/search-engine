@@ -20,7 +20,7 @@ public class InvertedIndexSearcher {
     private static HashSet<String> stoplist = new HashSet<>();
 
     public static void main(String[] args) {
-        System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
+        // System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
 
         CommandLineParser parser = new CommandLineParser(args);
 
@@ -30,10 +30,10 @@ public class InvertedIndexSearcher {
 
         // Load necessary data
         String baseDir = parser.fileDirectory;
-        System.out.println("base directory in inverted index searcher is " + baseDir);
+        // System.out.println("base directory in inverted index searcher is " + baseDir);
 
         stoplist = DataLoader.loadStoplist(Paths.get(baseDir, "generated_stoplist.txt").toString());
-        System.out.println("stoplist is " + stoplist);
+        // System.out.println("stoplist is " + stoplist);
         stemmingDictionary = DataLoader
                 .loadStemmingDictionary(Paths.get(baseDir, "stemming_dictionary.txt").toString());
         documentIdToFilename = DataLoader.loadDocumentIdMap(Paths.get(baseDir, "document_id_map.txt").toString());
@@ -60,7 +60,7 @@ public class InvertedIndexSearcher {
                     // Output results for single query
                     outputBatchResults(allResults, parser.outputMode, parser.outputFilename);
                 }
-                System.out.println("Search completed.");
+                // System.out.println("Search completed.");
             } else if (parser.printType != null && parser.printValue != null) {
                 // Print index entries
                 QueryResult result = processPrintRequest(parser.printType, parser.printValue);

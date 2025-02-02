@@ -18,7 +18,7 @@ class CommandLineParser {
     public String fileDirectory = ".";
 
     public CommandLineParser(String[] args) {
-        System.out.println("In commandline parser we have these as args: " + Arrays.toString(args));
+        // System.out.println("In commandline parser we have these as args: " + Arrays.toString(args));
         parse(args);
     }
 
@@ -27,7 +27,7 @@ class CommandLineParser {
             String arg = args[i];
             if (arg.startsWith("-FILE_DIR=")) {
                 fileDirectory = arg.substring("-FILE_DIR=".length());
-                System.out.println("File directory: " + fileDirectory);
+                // System.out.println("File directory: " + fileDirectory);
             }
             else if (arg.startsWith("-SEARCH=WORD")) {
                 searchType = "WORD";

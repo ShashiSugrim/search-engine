@@ -97,6 +97,7 @@ public class StatClasses {
             }
 
             jsonResult.put("results", docArray);
+            System.out.println(jsonResult.toJSONString());
             writer.write(jsonResult.toJSONString() + "\n");
         }
     }

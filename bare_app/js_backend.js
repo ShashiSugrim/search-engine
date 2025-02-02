@@ -1,64 +1,67 @@
 const express = require('express');
 const { exec } = require('child_process');
 const cors = require('cors');
-
 const fs = require('fs').promises;
 const path = require('path');
 
 const app = express();
 const port = 3000;
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cors());
 
-// Replace hardcoded file_path with parameter from command-line arguments
-const file_path = process.argv[2] || './';
-// (async () => {
-//     try {
-//       const files = await fs.readdir(file_path);
-//       console.log(`Contents of ${file_path}:`, files);
-//     } catch (err) {
-//       console.error(`Error reading directory ${file_path}:`, err);
-//     }
-//   })();
-// Search endpoint
+// Use absolute path for data directory
+const dataDir = process.argv[2] ? path.resolve(process.argv[2]) : __dirname;
+const outputPath = path.join(__dirname, 'output.txt');
+
+console.log(`[Init] Data directory: ${dataDir}`);
+console.log(`[Init] Output path: ${outputPath}`);
+
 app.post('/search', async (req, res) => {
-    try {
-        const { query } = req.body;
-        
-        if (!query) {
-            return res.status(400).json({ error: 'Search query is required' });
-        }
-
-        // Execute Java command
-        const command = `java -jar IsolatedTask9CS335-all.jar -FILE_DIR=${file_path} -SEARCH=QUERY "${query}" -GUI=false -output="output.txt"`;
-        
-        exec(command, async (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error: ${error}`);
-                return res.status(500).json({ error: 'Error executing search' });
-            }
-
-            try {
-                // Read the output file
-                const outputPath = path.join(__dirname, 'output.txt');
-                const data = await fs.readFile(outputPath, 'utf8');
-                const jsonData = JSON.parse(data);
-                
-                res.json(jsonData);
-            } catch (readError) {
-                console.error(`Error reading output file: ${readError}`);
-                res.status(500).json({ error: 'Error reading search results' });
-            }
-        });
-    } catch (err) {
-        console.error(`Server error: ${err}`);
-        res.status(500).json({ error: 'Internal server error' });
+  try {
+    const { query } = req.body;
+    if (!query) {
+      return res.status(400).json({ error: 'Query required' });
     }
+
+    // Clean previous output
+    try {
+      await fs.unlink(outputPath);
+      console.log(`[Cleanup] Removed old ${outputPath}`);
+    } catch (err) {
+      if (err.code !== 'ENOENT') console.error(`Cleanup error: ${err}`);
+    }
+
+    // Build Java command
+    const jarPath = path.join(__dirname, 'IsolatedTask9CS335-all.jar');
+    const command = `java -Dfile.encoding=UTF-8 -jar "${jarPath}" -FILE_DIR="${dataDir}" -SEARCH=QUERY "${query}" -GUI=false -output="${outputPath}"`;    
+    console.log(`[Execution] Command: ${command}`);
+
+    exec(command, { cwd: __dirname }, async (error, stdout, stderr) => {
+      // Log execution details
+      console.log(`[Java] stdout: ${stdout}`);
+      console.error(`[Java] stderr: ${stderr}`);
+      if (error) console.error(`[Java] error: ${error}`);
+
+      try {
+        // Verify file exists
+        await fs.access(outputPath);
+        const stats = await fs.stat(outputPath);
+        console.log(`[File] ${outputPath} modified at: ${stats.mtime}`);
+
+        // Read and return results
+        const data = await fs.readFile(outputPath, 'utf8');
+        const jsonData = JSON.parse(data);
+        res.json(JSON.parse(stdout));
+      } catch (readError) {
+        console.error(`[Error] File handling: ${readError}`);
+        res.status(500).json({ error: 'Result processing failed' });
+      }
+    });
+  } catch (err) {
+    console.error(`[Critical] Server error: ${err}`);
+    res.status(500).json({ error: 'Internal failure' });
+  }
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
