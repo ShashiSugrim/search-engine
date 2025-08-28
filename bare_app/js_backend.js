@@ -5,12 +5,19 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = 3003;
 
 app.use(express.json());
 app.use(cors());
 
-// Use absolute path for data directory
+// Add middleware to get IP address for all requests
+app.use((req, res, next) => {
+  console.log(req.headers)
+  const ip = req.headers['CF-Connecting-IP']?.split(',')[0] || req.socket.remoteAddress;
+  console.log(`[Request] Client IP: ${ip}`);
+  next();
+});
+
 const dataDir = process.argv[2] ? path.resolve(process.argv[2]) : __dirname;
 const outputPath = path.join(__dirname, 'output.txt');
 
@@ -19,6 +26,9 @@ console.log(`[Init] Output path: ${outputPath}`);
 
 app.post('/search', async (req, res) => {
   try {
+    const clientIP = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+    console.log(`[Search] Request from IP: ${clientIP}`);
+    
     const { query } = req.body;
     if (!query) {
       return res.status(400).json({ error: 'Query required' });
@@ -39,7 +49,7 @@ app.post('/search', async (req, res) => {
 
     exec(command, { cwd: __dirname }, async (error, stdout, stderr) => {
       // Log execution details
-      console.log(`[Java] stdout: ${stdout}`);
+      // console.log(`[Java] stdout: ${stdout}`);
       console.error(`[Java] stderr: ${stderr}`);
       if (error) console.error(`[Java] error: ${error}`);
 
