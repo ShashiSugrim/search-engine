@@ -4,13 +4,17 @@
   "description": "`java -jar Task9-all.jar -SEARCH=QUERY \"how many pcs are there in the world?\" -GUI=both`",
   "main": "js_backend.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start:api": "node js_backend.js",
+  "start:worker": "node worker.js",
+  "start:all": "pm2 start ecosystem.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+  "express": "^4.21.2",
+  "amqplib": "^0.10.3"
   }
 }
