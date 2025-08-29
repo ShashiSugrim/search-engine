@@ -11,3 +11,5 @@ testJar/node_modules/
 
 *.class
 output.txt
+fly.toml
+bare_app/output.json
