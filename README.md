@@ -3,3 +3,7 @@
 
 ## to Compile
 `gradle shadowJar`
+
+## Note
+There is a front-end I made with Next.js that uses this as the backend. Currently, the front-end is not open sourced, but you can access the website: https://banana-search.pages.dev/
+
