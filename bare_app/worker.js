@@ -21,17 +21,14 @@ async function writeJob(id, payload) {
 }
 
 async function processQuery(query, corrId, canceledMap) {
-  const outputPath = path.join(__dirname, `output_${process.pid}.txt`);
+  // const outputPath = path.join(__dirname, `output_${process.pid}.txt`);
   try {
-    try { await fs.unlink(outputPath); } catch (e) { if (e.code !== 'ENOENT') throw e; }
     const args = [
       '-Dfile.encoding=UTF-8',
       '-jar', jarPath,
       `-FILE_DIR=${dataDir}`,
       '-SEARCH=QUERY', query,
-      '-GUI=false',
-      `-output=${outputPath}`,
-    ];
+      '-GUI=false'    ];
     return await new Promise((resolve, reject) => {
       const child = spawn('java', args, { cwd: __dirname, detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
       let stdoutBuf = '';
@@ -67,8 +64,8 @@ async function processQuery(query, corrId, canceledMap) {
         if (cancelCheck) clearInterval(cancelCheck);
         if (stderrBuf) console.error(`[Java stderr] ${stderrBuf}`);
         try {
-          await fs.access(outputPath);
-          const data = await fs.readFile(outputPath, 'utf8');
+          // await fs.access(outputPath);
+          // const data = await fs.readFile(outputPath, 'utf8');
           const out = stdoutBuf && stdoutBuf.trim().startsWith('{') ? stdoutBuf : data;
           resolve(out);
         } catch (readErr) {

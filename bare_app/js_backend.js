@@ -22,14 +22,12 @@ app.use((req, res, next) => {
 });
 
 const dataDir = process.env.FILE_DIR ? path.resolve(process.env.FILE_DIR) : (process.argv[2] ? path.resolve(process.argv[2]) : __dirname);
-const outputPath = path.join(__dirname, 'output.txt');
 const RABBIT_URL = process.env.RABBITMQ_URL || 'amqp://localhost';
 const QUEUE = process.env.RABBITMQ_QUEUE || 'search_queries';
 const CANCEL_EXCHANGE = process.env.RABBITMQ_CANCEL_EXCHANGE || 'search_cancels';
 const JOBS_DIR = path.join(__dirname, 'jobs');
 
 console.log(`[Init] Data directory: ${dataDir}`);
-console.log(`[Init] Output path: ${outputPath}`);
 
 let amqpConn;
 let amqpChannel;
