@@ -81,7 +81,7 @@ app.post('/search', async (req, res) => {
       try { ch.deleteQueue(replyQueue).catch(() => {}); } catch {}
     };
 
-    const REQUEST_TTL_MS = Number(process.env.SEARCH_REQUEST_TTL_MS || 60_000);
+    const REQUEST_TTL_MS = Number(process.env.SEARCH_REQUEST_TTL_MS || 600000);
     const timer = setTimeout(() => {
       if (!settled) {
         // Publish cancel before responding so workers can drop/kill work

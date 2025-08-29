@@ -19,4 +19,4 @@ docker stop search-engine
 
 
 not detached
-docker build -t search-engine-cs355 . && docker run --name search-engine -p 3000:3000 search-engine-cs355
+docker build -t search-engine-cs355 . && docker run --name search-engine -p 3003:3000 search-engine-cs355

@@ -13,7 +13,7 @@ module.exports = {
 		{
 			name: 'worker',
 			script: 'worker.js',
-			instances: 4,
+			instances: 5,
 			exec_mode: 'cluster',
 			env: {
 				RABBITMQ_URL: process.env.RABBITMQ_URL || 'amqp://localhost',
