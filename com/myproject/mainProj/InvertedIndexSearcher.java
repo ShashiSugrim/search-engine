@@ -115,8 +115,8 @@ public class InvertedIndexSearcher {
         return allResults;
     }
 
-    private static QueryResult processSingleQuery(String searchType, String searchValue, boolean doStemming,
-            int snippetSize) {
+    public static QueryResult processSingleQuery(String searchType, String searchValue, boolean doStemming,
+                                                 int snippetSize) {
         try {
             if (searchType.equals("WORD")) {
                 return SearchProcessor.searchByWord(searchValue.toLowerCase(), doStemming, invertedIndex,
