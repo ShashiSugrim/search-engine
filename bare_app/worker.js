@@ -7,7 +7,7 @@ const QUEUE = process.env.RABBITMQ_QUEUE || 'search_queries';
 const RABBIT_URL = process.env.RABBITMQ_URL || 'amqp://localhost';
 const CANCEL_EXCHANGE = process.env.RABBITMQ_CANCEL_EXCHANGE || 'search_cancels';
 const dataDir = process.env.FILE_DIR ? path.resolve(process.env.FILE_DIR) : __dirname;
-const jarPath = path.join(__dirname, 'IsolatedTask9CS335-all.jar');
+const jarPath = path.join(__dirname, 'search-engine-all.jar');
 const JOBS_DIR = path.join(__dirname, 'jobs');
 
 async function ensureJobsDir() {
@@ -20,66 +20,72 @@ async function writeJob(id, payload) {
   await fs.writeFile(file, JSON.stringify(payload, null, 2));
 }
 
-async function processQuery(query, corrId, canceledMap) {
-  // const outputPath = path.join(__dirname, `output_${process.pid}.txt`);
-  try {
-    const args = [
-      '-Dfile.encoding=UTF-8',
-      '-jar', jarPath,
-      `-FILE_DIR=${dataDir}`,
-      '-SEARCH=QUERY', query,
-      '-GUI=false'    ];
-    return await new Promise((resolve, reject) => {
-      const child = spawn('java', args, { cwd: __dirname, detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
-      let stdoutBuf = '';
-      let stderrBuf = '';
-      child.stdout.on('data', (d) => { stdoutBuf += d.toString(); });
-      child.stderr.on('data', (d) => { stderrBuf += d.toString(); });
+class WarmJava {
+  constructor(jarPath, cwd) {
+    this.jarPath = jarPath;
+    this.cwd = cwd;
+    this.child = null;
+    this.buffer = '';
+    this.inflight = null; // { resolve, reject, corrId }
+    this.start();
+  }
 
-      const killChild = () => {
-        try {
-          // Kill the entire process group
-          process.kill(-child.pid, 'SIGTERM');
-          setTimeout(() => { try { process.kill(-child.pid, 'SIGKILL'); } catch {} }, 5000);
-        } catch {}
-      };
-
-      const cancelCheck = setInterval(() => {
-        try {
-          if (corrId && canceledMap && canceledMap.has(corrId)) {
-            console.log(`[Worker ${process.pid}] killing Java for canceled ${corrId}`);
-            clearInterval(cancelCheck);
-            killChild();
-            reject(new Error('canceled'));
-          }
-        } catch {}
-      }, 250);
-
-      child.on('error', (err) => {
-        if (cancelCheck) clearInterval(cancelCheck);
-        console.error('[Java spawn error]', err);
-        reject(err);
-      });
-      child.on('close', async () => {
-        if (cancelCheck) clearInterval(cancelCheck);
-        if (stderrBuf) console.error(`[Java stderr] ${stderrBuf}`);
-        try {
-          // await fs.access(outputPath);
-          // const data = await fs.readFile(outputPath, 'utf8');
-          const out = stdoutBuf && stdoutBuf.trim().startsWith('{') ? stdoutBuf : data;
-          resolve(out);
-        } catch (readErr) {
-          // Even if file missing, return stdout JSON if available
-          if (stdoutBuf && stdoutBuf.trim().startsWith('{')) {
-            resolve(stdoutBuf);
-          } else {
-            reject(readErr);
-          }
-        }
-      });
+  start() {
+    const args = ['-Dfile.encoding=UTF-8', '-jar', this.jarPath, '.'];
+    this.child = spawn('java', args, { cwd: this.cwd, stdio: ['pipe', 'pipe', 'pipe'] });
+    this.child.stdout.setEncoding('utf8');
+    this.child.stderr.setEncoding('utf8');
+    this.child.stdout.on('data', (d) => this.onStdout(d));
+    this.child.stderr.on('data', (d) => console.error(`[Java stderr ${process.pid}]`, d));
+    this.child.on('exit', (code, signal) => {
+      console.error(`[WarmJava] exited code=${code} signal=${signal} (pid ${process.pid}), restarting...`);
+      // Reject current inflight if any
+      if (this.inflight) {
+        this.inflight.reject(new Error('java_exited'));
+        this.inflight = null;
+      }
+      setTimeout(() => this.start(), 1000);
     });
-  } catch (err) {
-    throw err;
+  }
+
+  onStdout(chunk) {
+    this.buffer += chunk;
+    // Try to extract one JSON object from buffer using brace counting
+    const start = this.buffer.indexOf('{');
+    if (start === -1) return;
+    let count = 0;
+    let endIndex = -1;
+    for (let i = start; i < this.buffer.length; i++) {
+      const c = this.buffer[i];
+      if (c === '{') count++;
+      else if (c === '}') {
+        count--;
+        if (count === 0) { endIndex = i; break; }
+      }
+    }
+    if (endIndex !== -1) {
+      const jsonText = this.buffer.slice(start, endIndex + 1);
+      const rest = this.buffer.slice(endIndex + 1);
+      this.buffer = rest; // keep any trailing output for next round
+      if (this.inflight) {
+        this.inflight.resolve(jsonText);
+        this.inflight = null;
+      }
+    }
+  }
+
+  async request(query, corrId) {
+    // Only one at a time expected; ensure no overlap
+    if (this.inflight) throw new Error('inflight_request');
+    return new Promise((resolve, reject) => {
+      this.inflight = { resolve, reject, corrId };
+      try {
+        this.child.stdin.write(String(query).trim() + '\n');
+      } catch (e) {
+        this.inflight = null;
+        reject(e);
+      }
+    });
   }
 }
 
@@ -90,6 +96,9 @@ async function start() {
   await ch.assertExchange(CANCEL_EXCHANGE, 'fanout', { durable: false });
   ch.prefetch(1); // one task at a time per worker
   console.log(`[Worker ${process.pid}] waiting for messages in ${QUEUE}`);
+
+  // Start warm Java process rooted at dataDir
+  const engine = new WarmJava(jarPath, dataDir);
 
   // Track canceled correlationIds in-memory with TTL pruning
   const canceled = new Map(); // id -> timestamp
@@ -139,7 +148,8 @@ async function start() {
         } catch (e) { console.error('writeJob running error', e); }
       }
 
-      const result = await processQuery(query, corrId, canceled);
+      // Send to warm Java and wait for JSON
+      const jsonText = await engine.request(query, corrId);
       // If canceled while running, we still ack and do not reply
       if (corrId && canceled.has(corrId)) {
         console.log(`[Worker ${process.pid}] finished but client canceled ${corrId}`);
@@ -150,13 +160,12 @@ async function start() {
         return;
       }
       if (replyTo && corrId) {
-        ch.sendToQueue(replyTo, Buffer.from(result), { correlationId: corrId, contentType: 'application/json' });
+        ch.sendToQueue(replyTo, Buffer.from(jsonText), { correlationId: corrId, contentType: 'application/json' });
       }
       if (jobId) {
         try {
-          const text = String(result);
-          let body;
-          try { body = JSON.parse(text); } catch { body = { result: text }; }
+          const text = String(jsonText);
+          let body; try { body = JSON.parse(text); } catch { body = { result: text }; }
           await writeJob(jobId, { id: jobId, status: 'done', query, result: body, finishedAt: Date.now() });
         } catch (e) { console.error('writeJob done error', e); }
       }
@@ -170,6 +179,12 @@ async function start() {
         }
         ch.ack(msg);
         return;
+      }
+      if (String(err && err.message).toLowerCase().includes('java_exited')) {
+        // Java restarted; mark failed for this job
+        if (jobId) {
+          try { await writeJob(jobId, { id: jobId, status: 'failed', query, finishedAt: Date.now(), error: 'java_exited' }); } catch {}
+        }
       }
       // optional: dead-letter or requeue. We'll ack and return an error once.
       if (replyTo && corrId) {
