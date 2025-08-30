@@ -32,3 +32,15 @@ This backend offloads heavy search requests to RabbitMQ so only 4 concurrent sea
 
 ## Test
 POST /search with `{ "query": "your text" }`. API enqueues and waits up to 60s for a worker response.
+
+
+## Bugs
+1. Too many connections left open
+- send 1000s of requests and they handle them but leave too many open connections
+
+2. too many queues get created but in search-queries queue, we already dumped a lot of tasks
+ - this means a user cancelled their requests, so i ended a load test early, but it seems that the server still is processing them because 1000s of queues were created, but in search_queries queue, all of the items were already cleared from the quueue, so we are wasting time processing the queries. 
+
+
+## todo
+1. keep load testing the backend with k6 and python script to see it handle multiple requests but it should also be able to handle if we cancel the requests, and shouldnt open or leave too many connections open after they handled many requests
