@@ -31,13 +31,58 @@ console.log(`[Init] Data directory: ${dataDir}`);
 
 let amqpConn;
 let amqpChannel;
+// Single reply consumer using RabbitMQ direct-reply-to to avoid per-request queues
+let replyConsumerStarted = false;
+// correlationId -> resolver function(text)
+const replyHandlers = new Map();
 
 async function ensureAmqp() {
   if (amqpChannel) return amqpChannel;
-  amqpConn = await amqp.connect(RABBIT_URL);
+  function amqpOptionsWithName(urlString, name) {
+    try {
+      const u = new URL(urlString);
+      const protocol = (u.protocol || 'amqp:').replace(':', '');
+      const vhostPath = u.pathname || '/';
+      const vhost = decodeURIComponent(vhostPath === '/' ? '/' : vhostPath.replace(/^\//, ''));
+      const opts = {
+        protocol,
+        hostname: u.hostname || 'localhost',
+        port: u.port ? Number(u.port) : (protocol === 'amqps' ? 5671 : 5672),
+        username: decodeURIComponent(u.username || 'guest'),
+        password: decodeURIComponent(u.password || 'guest'),
+        vhost,
+        locale: u.searchParams.get('locale') || 'en_US',
+        frameMax: u.searchParams.get('frameMax') ? Number(u.searchParams.get('frameMax')) : undefined,
+        heartbeat: u.searchParams.get('heartbeat') ? Number(u.searchParams.get('heartbeat')) : undefined,
+        channelMax: u.searchParams.get('channelMax') ? Number(u.searchParams.get('channelMax')) : undefined,
+        clientProperties: { connection_name: name },
+      };
+      Object.keys(opts).forEach((k) => opts[k] === undefined && delete opts[k]);
+      return opts;
+    } catch {
+      return { protocol: 'amqp', hostname: 'localhost', port: 5672, clientProperties: { connection_name: name } };
+    }
+  }
+  amqpConn = await amqp.connect(amqpOptionsWithName(RABBIT_URL, `api-${process.pid}`));
   amqpChannel = await amqpConn.createChannel();
   await amqpChannel.assertQueue(QUEUE, { durable: true });
   await amqpChannel.assertExchange(CANCEL_EXCHANGE, 'fanout', { durable: false });
+  // Start a single direct-reply-to consumer once per process
+  if (!replyConsumerStarted) {
+    await amqpChannel.consume('amq.rabbitmq.reply-to', (msg) => {
+      if (!msg) return;
+      const corrId = msg.properties.correlationId;
+      const handler = replyHandlers.get(corrId);
+      if (!handler) return; // unknown/late reply
+      replyHandlers.delete(corrId);
+      try {
+        handler(msg.content.toString());
+      } catch (e) {
+        // best-effort: drop
+      }
+    }, { noAck: true });
+    replyConsumerStarted = true;
+  }
   return amqpChannel;
 }
 
@@ -71,46 +116,10 @@ app.post('/search', async (req, res) => {
 
     // Send RPC to RabbitMQ and await response from one of the workers
     const ch = await ensureAmqp();
-  const corrId = crypto.randomUUID();
-    const { queue: replyQueue } = await ch.assertQueue('', { exclusive: true, durable: false, autoDelete: true });
+    const corrId = crypto.randomUUID();
     let settled = false;
 
-    const cleanup = () => {
-      try { ch.deleteQueue(replyQueue).catch(() => {}); } catch {}
-    };
-
     const REQUEST_TTL_MS = Number(process.env.SEARCH_REQUEST_TTL_MS || 600000);
-    const timer = setTimeout(() => {
-      if (!settled) {
-        // Publish cancel before responding so workers can drop/kill work
-        try { ch.publish(CANCEL_EXCHANGE, '', Buffer.from(corrId), { contentType: 'text/plain' }); } catch {}
-        settled = true;
-        cleanup();
-        return res.status(504).json({ error: 'Search timed out' });
-      }
-    }, REQUEST_TTL_MS);
-
-    await ch.consume(replyQueue, (msg) => {
-      if (!msg) return;
-      if (msg.properties.correlationId !== corrId) return;
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      try {
-        const text = msg.content.toString();
-        let json;
-        try {
-          json = JSON.parse(text);
-        } catch {
-          json = { result: text };
-        }
-        res.json(json);
-      } catch (err) {
-        res.status(500).json({ error: 'Invalid worker response' });
-      } finally {
-        cleanup();
-      }
-    }, { noAck: true });
 
     const publishCancel = () => {
       try {
@@ -120,13 +129,35 @@ app.post('/search', async (req, res) => {
       }
     };
 
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      publishCancel();
+      replyHandlers.delete(corrId);
+      return res.status(504).json({ error: 'Search timed out' });
+    }, REQUEST_TTL_MS);
+
+    // Register the reply handler before publishing
+    replyHandlers.set(corrId, (text) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try {
+        let json;
+        try { json = JSON.parse(text); } catch { json = { result: text }; }
+        if (!res.headersSent) res.json(json);
+      } catch (err) {
+        if (!res.headersSent) res.status(500).json({ error: 'Invalid worker response' });
+      }
+    });
+
     // If the client disconnects before we respond, cancel the job
     const onClose = () => {
       if (!settled) {
         settled = true;
         clearTimeout(timer);
+        replyHandlers.delete(corrId);
         publishCancel();
-        cleanup();
       }
     };
     req.on('aborted', onClose);
@@ -135,10 +166,9 @@ app.post('/search', async (req, res) => {
     const body = JSON.stringify({ query, meta: { ip: clientIP, ts: Date.now() } });
     ch.sendToQueue(QUEUE, Buffer.from(body), {
       correlationId: corrId,
-      replyTo: replyQueue,
+      replyTo: 'amq.rabbitmq.reply-to',
       persistent: true,
       contentType: 'application/json',
-      // Per-message expiration: auto-drop if not consumed in time
       expiration: String(REQUEST_TTL_MS + 5000),
     });
   } catch (err) {

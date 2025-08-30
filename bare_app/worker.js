@@ -26,7 +26,7 @@ class WarmJava {
     this.cwd = cwd;
     this.child = null;
     this.buffer = '';
-    this.inflight = null; // { resolve, reject, corrId }
+  this.inflight = null; // { resolve, reject, corrId }
     this.start();
   }
 
@@ -87,10 +87,56 @@ class WarmJava {
       }
     });
   }
+
+  // Best-effort cancel current request by sending a special line the Java
+  // side understands as termination, or closing stdin if unsupported.
+  cancel(corrId) {
+    if (!this.inflight || (corrId && this.inflight.corrId !== corrId)) return;
+    // Reset state so next request can proceed
+    const inflight = this.inflight;
+    this.inflight = null;
+    try {
+      // Try graceful termination first
+      this.child.kill('SIGTERM');
+    } catch {}
+    // Force kill if it doesn't exit promptly
+    setTimeout(() => {
+      try { this.child.kill('SIGKILL'); } catch {}
+    }, 1500);
+    // Reject the waiting promise so caller can mark canceled
+    inflight.reject(new Error('canceled'));
+  }
+}
+
+function amqpOptionsWithName(urlString, name) {
+  try {
+    const u = new URL(urlString);
+    const protocol = (u.protocol || 'amqp:').replace(':', '');
+    const vhostPath = u.pathname || '/';
+    const vhost = decodeURIComponent(vhostPath === '/' ? '/' : vhostPath.replace(/^\//, ''));
+    const opts = {
+      protocol,
+      hostname: u.hostname || 'localhost',
+      port: u.port ? Number(u.port) : (protocol === 'amqps' ? 5671 : 5672),
+      username: decodeURIComponent(u.username || 'guest'),
+      password: decodeURIComponent(u.password || 'guest'),
+      vhost,
+      locale: u.searchParams.get('locale') || 'en_US',
+      frameMax: u.searchParams.get('frameMax') ? Number(u.searchParams.get('frameMax')) : undefined,
+      heartbeat: u.searchParams.get('heartbeat') ? Number(u.searchParams.get('heartbeat')) : undefined,
+      channelMax: u.searchParams.get('channelMax') ? Number(u.searchParams.get('channelMax')) : undefined,
+      clientProperties: { connection_name: name },
+    };
+    // Remove undefined keys
+    Object.keys(opts).forEach((k) => opts[k] === undefined && delete opts[k]);
+    return opts;
+  } catch {
+    return { protocol: 'amqp', hostname: 'localhost', port: 5672, clientProperties: { connection_name: name } };
+  }
 }
 
 async function start() {
-  const conn = await amqp.connect(RABBIT_URL);
+  const conn = await amqp.connect(amqpOptionsWithName(RABBIT_URL, `worker-${process.pid}`));
   const ch = await conn.createChannel();
   await ch.assertQueue(QUEUE, { durable: true });
   await ch.assertExchange(CANCEL_EXCHANGE, 'fanout', { durable: false });
@@ -109,6 +155,8 @@ async function start() {
     if (!m) return;
     const id = m.content.toString();
     canceled.set(id, Date.now());
+  // Actively cancel in-flight Java task if it matches
+  try { engine.cancel(id); } catch {}
   }, { noAck: true });
 
   // Periodic prune
