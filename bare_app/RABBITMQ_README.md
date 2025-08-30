@@ -43,4 +43,5 @@ POST /search with `{ "query": "your text" }`. API enqueues and waits up to 60s f
 
 
 ## todo
+
 1. keep load testing the backend with k6 and python script to see it handle multiple requests but it should also be able to handle if we cancel the requests, and shouldnt open or leave too many connections open after they handled many requests
